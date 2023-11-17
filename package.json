@@ -17,5 +17,8 @@
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },
-  "private": true
+  "private": true,
+  "description": "Group app for mobile dev class consisting of Alexandr, Ayden and Ryan.",
+  "author": "Alexandr, Ayden & Ryan",
+  "license": "ISC"
 }
