@@ -4,10 +4,10 @@
     "slug": "group-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/cs2dbicon.png",
+    "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/cs2dbsplash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
