@@ -16,7 +16,7 @@ import TESTJSON from "../JSON_TEST/state.json";
 export default function Screen() {
   const [loading, setLoading] = useState(true);
   const LOAD_AMOUNT = 100;
-  const START_LOAD = 20;
+  const START_LOAD = 1;
 
   useEffect(() => {
     dispatch(resetState());
@@ -44,7 +44,11 @@ export default function Screen() {
     Promise.all(promises)
       .then((val) => {
         val.forEach((item) => {
-          dispatch(addItem(item));
+          console.log(JSON.stringify(item))
+          if(item.marketable == 1 && item.tradable == 1)
+          {
+            dispatch(addItem(item));
+          }
         });
         setLoading(false);
       })
