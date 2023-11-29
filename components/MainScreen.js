@@ -6,6 +6,10 @@ import {
   Image,
   StyleSheet,
   View,
+  Button,
+  Modal,
+  TextInput,
+  Pressable,
 } from "react-native";
 import { useState, useEffect } from "react";
 
@@ -13,17 +17,62 @@ import { useState, useEffect } from "react";
 import { itemStore } from "../stores/store";
 import { addItem, resetState } from "../reducers/itemslice";
 import { useSelector, useDispatch } from "react-redux";
+import Checkbox from 'expo-checkbox';
 
 export default function MainScreen() {
   const dispatch = useDispatch();
 
+  //testing using useState
+  const [showModal, setShowModal] = useState(false);
+  const [filterWord, setFilterWord] = useState("");
+  const [isFN, setFN] = useState(false);
+
   const items = useSelector((state) => {
     return state.item.value;
   });
+
+  const searchButtonHandler = () =>{
+    setShowModal(!showModal);
+    console.log(filterWord);
+  };
   return (
     <SafeAreaView style={styles.background}>
       <View style={styles.view}>
         {/* <Text>test</Text> */}
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={showModal}
+          onRequestClose={()=>{setShowModal(!showModal)}}
+        >
+          <SafeAreaView>
+            <Text>
+              filters.
+            </Text>
+            <TextInput 
+              editable
+              multiline
+              onChangeText={value => setFilterWord(value)}
+              style={styles.searchBar}
+            />
+            <View>
+              <Text>Wear</Text>
+                <Checkbox value={isFN} onValueChange={setFN} />
+                <Text>Factory New</Text>
+                <Checkbox value={isFN} onValueChange={setFN} />
+                <Text>Minimal Wear</Text>
+                <Checkbox value={isFN} onValueChange={setFN} />
+                <Text>Field Tested</Text>
+                <Checkbox value={isFN} onValueChange={setFN} />
+                <Text>Well Worn</Text>
+                <Checkbox value={isFN} onValueChange={setFN} />
+                <Text>Battle Scarred</Text>
+            </View>
+            <Button title="Search" onPress={()=>{console.log(filterWord); setShowModal(!showModal)}} />
+            <Button title="Close" onPress={()=> setShowModal(!showModal)} />
+          </SafeAreaView>
+        </Modal>
+        <Button title="Filters" onPress={()=> setShowModal(!showModal)} />
         <FlatList
           key={"-"}
           style={styles.list}
@@ -36,18 +85,40 @@ export default function MainScreen() {
   );
 }
 
-const renderItem = ({ item }) => {
-  return (
-    <SafeAreaView style={styles.imageView}>
-      <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
-        {item.name}
-      </Text>
-      <Image
-        source={{ uri: img(item.icon_url) }}
-        style={[styles.img, { borderColor: "#" + item.rarity_color }]}
-      />
-    </SafeAreaView>
-  );
+const renderItem = ({ item, filterWord }) => {
+  if(filterWord == null){
+    return (
+      <SafeAreaView style={styles.imageView}>
+        <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
+          {item.name}
+        </Text>
+        <Image
+          source={{ uri: img(item.icon_url) }}
+          style={[styles.img, { borderColor: "#" + item.rarity_color }]}
+        />
+      </SafeAreaView>
+    );
+  }else{
+    if(item.name.toLowerCase() == filterWord){
+      return(
+        <SafeAreaView>
+          <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
+            {item.name}
+          </Text>
+          <Image
+            source={{ uri: img(item.icon_url) }}
+            style={[styles.img, { borderColor: "#" + item.rarity_color }]}
+          />
+        </SafeAreaView>
+      );
+    }else{
+      return(
+        <SafeAreaView>
+          <Text>Rut roh</Text>
+        </SafeAreaView>
+      )
+    }
+  }
 };
 
 const img = (id) => {
@@ -84,4 +155,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#1b2838",
   },
   list: {},
+  searchBar:{borderWidth:1},
+  checkBoxContainer:{
+    flexDirection:'row',
+  }
 });
