@@ -1,6 +1,5 @@
 //React imports
 import {
-  SafeAreaView,
   Text,
   FlatList,
   Image,
@@ -8,6 +7,8 @@ import {
   View,
 } from "react-native";
 import { useState, useEffect } from "react";
+import GlobalStyles from './GlobalStyles';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 //Redux imports
 import { itemStore } from "../stores/store";
@@ -21,12 +22,12 @@ export default function MainScreen() {
     return state.item.value;
   });
   return (
-    <SafeAreaView style={styles.background}>
-      <View style={styles.view}>
+    <SafeAreaView style={GlobalStyles.background}>
+      <View style={GlobalStyles.view}>
         {/* <Text>test</Text> */}
         <FlatList
           key={"-"}
-          style={styles.list}
+          style={GlobalStyles.list}
           data={items}
           renderItem={renderItem}
           numColumns={2}
@@ -38,13 +39,13 @@ export default function MainScreen() {
 
 const renderItem = ({ item }) => {
   return (
-    <SafeAreaView style={styles.imageView}>
+    <SafeAreaView style={GlobalStyles.imageView}>
       <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
         {item.name}
       </Text>
       <Image
         source={{ uri: img(item.icon_url) }}
-        style={[styles.img, { borderColor: "#" + item.rarity_color }]}
+        style={[GlobalStyles.img, { borderColor: "#" + item.rarity_color }]}
       />
     </SafeAreaView>
   );
@@ -56,32 +57,3 @@ const img = (id) => {
   return url;
 };
 
-const styles = StyleSheet.create({
-  view: {
-    padding: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    margin: 20,
-    borderRadius: 5,
-  },
-  img: {
-    width: "95%",
-    aspectRatio: 1,
-    backgroundColor: "#071215",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "transparent",
-    margin: 5,
-  },
-  imageView: {
-    flex: 1,
-    flexDirection: "column",
-    margin: 0,
-    paddingTop: 10,
-    justifyContent: "space-between",
-    alignContent: "center",
-  },
-  background: {
-    backgroundColor: "#1b2838",
-  },
-  list: {},
-});

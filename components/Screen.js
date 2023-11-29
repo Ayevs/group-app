@@ -44,7 +44,7 @@ export default function Screen() {
     Promise.all(promises)
       .then((val) => {
         val.forEach((item) => {
-          // console.log(JSON.stringify(item)) commented because it was filling up my console like crazy
+          // console.log(JSON.stringify(item)) commented because it was filling up my console like crazy - Alex
           if (item.marketable == 1 && item.tradable == 1) {
             dispatch(addItem(item));
           }
