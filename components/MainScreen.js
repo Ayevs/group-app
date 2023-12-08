@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { useState, useEffect } from "react";
 import { Dropdown } from 'react-native-element-dropdown';
+import GlobalStyles from './GlobalStyles';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 //Redux imports
 import { itemStore } from "../stores/store";
