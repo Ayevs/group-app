@@ -231,8 +231,7 @@ export default function MainScreen() {
   );
 }
 
-const renderItem = ({ item, filterWord }) => {
-  if(filterWord == null){
+const renderItem = ({ item }) => {
     return (
       <SafeAreaView style={styles.imageView}>
         <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
@@ -244,27 +243,6 @@ const renderItem = ({ item, filterWord }) => {
         />
       </SafeAreaView>
     );
-  }else{
-    if(item.name.toLowerCase() == filterWord){
-      return(
-        <SafeAreaView>
-          <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
-            {item.name}
-          </Text>
-          <Image
-            source={{ uri: img(item.icon_url) }}
-            style={[styles.img, { borderColor: "#" + item.rarity_color }]}
-          />
-        </SafeAreaView>
-      );
-    }else{
-      return(
-        <SafeAreaView>
-          <Text>Rut roh</Text>
-        </SafeAreaView>
-      )
-    }
-  }
 };
 
 const img = (id) => {
