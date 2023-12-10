@@ -15,30 +15,70 @@ import TESTJSON from "../JSON_TEST/state.json";
 
 export default function Screen() {
   const [loading, setLoading] = useState(true);
-  const LOAD_AMOUNT = 100;
+  const LOAD_AMOUNT = 10;
   const START_LOAD = 1;
+  const [filters, setFilters] = useState({
+    gun: null,
+    wears: null,
+    skin: null,
+  });
 
   useEffect(() => {
-    dispatch(resetState());
-
     //USE THIS FUNCTION TO TEST WITH THE ACTUAL API
     //fetchData()
 
     //USE THIS FUNCTION TO TEST WITH THE OFFLINE JSON FILE
     updateState(TESTJSON);
-  }, []);
+  }, [filters]);
+
+  const giveFilters = (g, w, s) => {
+    setFilters({ gun: g, wears: w, skin: s });
+  };
+
+  const filtersChecked = (item) => {
+    if (item != undefined) {
+      if (filters.skin != null) {
+        if (!item.name.toLowerCase().includes(filters.skin.toLowerCase())) {
+          return false;
+        }
+      }
+      if (filters.wears != null) {
+        if (filters.wears[item.exterior] == false) {
+          return false;
+        }
+      }
+      if (filters.gun != null) {
+        if (!item.gun_type.includes(filters.gun)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
 
   const updateState = (json) => {
+    if (items.length > 0) {
+      dispatch(resetState());
+    }
     const keys = Object.keys(json.items_list);
     promises = [];
-    for (var i = START_LOAD; i < START_LOAD + LOAD_AMOUNT; i++) {
-      promises.push(
-        new Promise((resolve, reject) => {
-          var key = keys[i];
-          resolve(json.items_list[key]);
-          reject(undefined);
-        })
-      );
+    let target = LOAD_AMOUNT;
+    for (var i = START_LOAD; i < target; i++) {
+      var key = keys[i];
+      if (filtersChecked(json.items_list[key])) {
+        promises.push(
+          new Promise((resolve, reject) => {
+            var key = keys[i];
+            resolve(json.items_list[key]);
+            reject(undefined);
+          })
+        );
+      } else {
+        if (target < keys.length) {
+          target++;
+        }
+      }
+      console.log(promises.length);
     }
 
     Promise.all(promises)
@@ -74,7 +114,7 @@ export default function Screen() {
 
   return (
     <SafeAreaView>
-      {loading == true ? <Loading /> : <MainScreen />}
+      {loading == true ? <Loading /> : <MainScreen filter={giveFilters} />}
     </SafeAreaView>
   );
 }
