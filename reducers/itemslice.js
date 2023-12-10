@@ -11,6 +11,7 @@ const itemSlice = createSlice({
         },
         resetState: (state, action) => {
             state.value = []
+            console.log('resets here')
         }
     }
 })

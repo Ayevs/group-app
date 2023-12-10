@@ -20,21 +20,26 @@ import { addItem, resetState } from "../reducers/itemslice";
 import { useSelector, useDispatch } from "react-redux";
 import Checkbox from 'expo-checkbox';
 
-export default function MainScreen() {
+export default function MainScreen(props) {
   const dispatch = useDispatch();
 
-  //testing using useState
   const [showModal, setShowModal] = useState(false); //Modal state
-  const [filterWord, setFilterWord] = useState(""); //filtered word state
-  const [wearArray, setWearArray] = useState([false, false, false, false, false]);
-  const [gun, setGun] = useState(null);
-  const [resetFilters, setResetFilters] = useState(true);
-  const [filteredList, setFilteredList] = useState([]);
 
+  //Filter dependencies
+  const [skinName, setSkinName] = useState(""); //filtered word state
+  const [wearObj, setWearObj] = useState({
+    "Factory New": true,
+    "Minimal Wear": true,
+    "Field-Tested": true,
+    "Well-Worn": true,
+    "Battle-Scarred": true
+  });
+  const [gun, setGun] = useState(null);
+
+  //Loads items from store and stores it in useEffect. This is so that the useEffect value can be altered based therefore making the store immutable
   const items = useSelector((state) => state.item.value);
 
-
-  const gunList = [
+  const guns = [
     { label: 'Glock-18', value: 'Glock-18' },
     { label: 'Dual Berettas', value: 'Dual Berettas' },
     { label: 'P250', value: 'P250' },
@@ -81,10 +86,80 @@ export default function MainScreen() {
     { label: 'Shadow Daggers', value: 'Shadow Daggers' },
     { label: 'Stiletto Knife', value: 'Skeleton Knife' },
     { label: 'Survival Knife', value: 'Survival Knife' },
-    { label: 'Ursus Knife', value: 'Talon Knife' },
+    { label: 'Ursus Knife', value: 'Ursus Knife' },
+    { label: 'Talon Knife', value: 'Talon Knife'},
   ];
 
-  const DropdownComponent = () => {
+  const wears = {
+    factorynew: "Factory New",
+    minimalwear: "Minimal Wear",
+    fieldtested: "Field-Tested",
+    wellworn: "Well-Worn",
+    battlescarred: "Battle-Scarred"
+
+  }
+
+  const searchMenu = () => {
+    return(
+      <Modal
+          animationType="slide"
+          transparent={false}
+          visible={showModal}
+          onRequestClose={() => { setShowModal(!showModal) }}
+        >
+          <SafeAreaView>
+            <TextInput
+              editable
+              multiline
+              onChangeText={value => setSkinName(value == "" ? null : value.toLowerCase())}
+              style={styles.searchBar}
+              placeholder='Enter Skin Here...'
+              placeholderTextColor='#ABABAB'
+            />
+            <Dropdown
+              data = {guns}
+              search
+              maxHeight={300}
+              searchField = {guns}
+              labelField="label"
+              valueField="value"
+              value={gun}
+              onChange={item=>{setGun(item.value)}}
+            />
+            <View>
+              <Text>Wears:</Text>
+              <View>
+                <Text>Factory New</Text>
+                <Checkbox value={wearObj["Factory New"]} onValueChange={() => setWearObj({...wearObj, "Factory New": !wearObj["Factory New"]})} />
+              </View>
+              <View>
+                <Text>Minimal Wear</Text>
+                <Checkbox value={wearObj["Minimal Wear"]} onValueChange={() => setWearObj({...wearObj, "Minimal Wear": !wearObj["Minimal Wear"]})} />
+              </View>
+              <View>
+                <Text>Field Tested</Text>
+                <Checkbox value={wearObj["Field-Tested"]} onValueChange={() => setWearObj({...wearObj, "Field-Tested": !wearObj["Field-Tested"]})} />
+              </View>
+              <View>
+                <Text>Well Worn</Text>
+                <Checkbox value={wearObj["Well-Worn"]} onValueChange={() => setWearObj({...wearObj, "Well-Worn": !wearObj["Well-Worn"]})} />
+              </View>
+              <View>
+                <Text>Battle Scarred</Text>
+                <Checkbox value={wearObj["Battle-Scarred"]} onValueChange={() => setWearObj({...wearObj, "Battle-Scarred": !wearObj["Battle-Scarred"]})} />
+              </View>
+            </View>
+            <Button title="Search" onPress={() => {
+              setShowModal(!showModal)
+              props.filter(gun, wearObj, skinName)
+            }} />
+            <Button title="Close" onPress={() => setShowModal(!showModal)} />
+          </SafeAreaView>
+        </Modal>
+    )
+  }
+
+  const dropdownComponent = () => {
     const [isFocus, setisFocus] = useState(null);
 
     const renderLabel = () => {
@@ -105,7 +180,7 @@ export default function MainScreen() {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={gunList}
+          data={guns}
           search
           maxHeight={300}
           labelField={"label"}
@@ -124,100 +199,13 @@ export default function MainScreen() {
     )
   }
 
-  const toggleBooleanAtIndex = (index) => {
-    setWearArray((prevArray) => {
-      const newArr = [...prevArray];
-      newArr[index] = !newArr[index];
-      return newArr;
-    });
-  };
-
-  const searchButtonHandler = () => {
-    setShowModal(!showModal);
-    filterArr();
-  };
-
-  const getWear = () =>{
-    var wearSelected;
-    if(wearArray[0]){
-      return "Factory New";  
-    }else if(wearArray[1]){
-      return "Minimal Wear";
-    }else if(wearArray[2]){
-      return "Field-Tested";
-    }else if(wearArray[3]){
-      return "Well-Worn";
-    }else{
-      return "Battle-Scarred";
-    }
-  };
-
-  const filterArr = () =>{
-    var wearSelected = getWear().toLowerCase();
-    items.forEach((skin)=>{
-      const wear = skin.exterior;
-      const weapon = skin.gun_type;
-      const skinName = skin.name.toLowerCase();
-      if(!wearSelected && !gun && !filterWord){
-        return false;
-      }
-      if(wear && wear.toLowerCase() === wearSelected && weapon && weapon.toLowerCase() === gun.toLowerCase() && skinName.includes(filterWord.toLowerCase())){
-          console.log('gun: ', gun, ' ', 'wear: ', wearSelected, ' ', 'filtered word: ', filterWord);
-      }
-    });
-  };
-
   return (
     <SafeAreaView style={styles.background}>
+      {searchMenu()}
       <View style={styles.view}>
-        {/* <Text>test</Text> */}
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={showModal}
-          onRequestClose={() => { setShowModal(!showModal) }}
-        >
-          <SafeAreaView>
-            <Text>
-              filters.
-            </Text>
-            <TextInput
-              editable
-              multiline
-              onChangeText={value => setFilterWord(value)}
-              style={styles.searchBar}
-              placeholder='Enter Skin Here...'
-              placeholderTextColor='#ABABAB'
-            />
-            <View>
-              {DropdownComponent()}
-              <Text>Wears:</Text>
-              <View>
-                <Text>Factory New</Text>
-                <Checkbox value={wearArray[0]} onValueChange={() => toggleBooleanAtIndex(0)} />
-              </View>
-              <View>
-                <Text>Minimal Wear</Text>
-                <Checkbox value={wearArray[1]} onValueChange={() => toggleBooleanAtIndex(1)} />
-              </View>
-              <View>
-                <Text>Field Tested</Text>
-                <Checkbox value={wearArray[2]} onValueChange={() => toggleBooleanAtIndex(2)} />
-              </View>
-              <View>
-                <Text>Well Worn</Text>
-                <Checkbox value={wearArray[3]} onValueChange={() => toggleBooleanAtIndex(3)} />
-              </View>
-              <View>
-                <Text>Battle Scarred</Text>
-                <Checkbox value={wearArray[4]} onValueChange={() => toggleBooleanAtIndex(4)} />
-              </View>
-            </View>
-            <Button title="Search" onPress={() => searchButtonHandler()} />
-            <Button title="Close" onPress={() => setShowModal(!showModal)} />
-          </SafeAreaView>
-        </Modal>
-        <Button title="Filters" onPress={() => (setShowModal(!showModal), setResetFilters(!resetFilters))} />
+        <Button title = "Search" onPress={() => {
+          setShowModal(true)
+        }}/>
         <FlatList
           key={"-"}
           style={styles.list}
