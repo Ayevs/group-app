@@ -15,7 +15,7 @@ import TESTJSON from "../JSON_TEST/state.json";
 
 export default function Screen() {
   const [loading, setLoading] = useState(true);
-  const LOAD_AMOUNT = 10;
+  const LOAD_AMOUNT = 10; //to adjust amount of items loaded
   const START_LOAD = 1;
   const [filters, setFilters] = useState({
     gun: null,

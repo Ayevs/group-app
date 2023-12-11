@@ -111,97 +111,127 @@ export default function MainScreen(props) {
           setShowModal(!showModal);
         }}
       >
-        <SafeAreaView>
-          <TextInput
-            editable
-            multiline
-            onChangeText={(value) =>
-              setSkinName(value == "" ? null : value.toLowerCase())
-            }
-            style={styles.searchBar}
-            placeholder="Enter Skin Here..."
-            placeholderTextColor="#ABABAB"
-          />
-          <Dropdown
-            data={guns}
-            search
-            maxHeight={300}
-            searchField={guns}
-            labelField="label"
-            valueField="value"
-            value={gun}
-            onChange={(item) => {
-              setGun(item.value);
-            }}
-          />
-          <View>
-            <Text>Wears:</Text>
+        <SafeAreaView style={GlobalStyles.modalBackground}>
+          <SafeAreaView style={GlobalStyles.modalSearch}>
+            <TextInput
+              editable
+              multiline
+              onChangeText={(value) =>
+                setSkinName(value == "" ? null : value.toLowerCase())
+              }
+              style={GlobalStyles.searchBar}
+              placeholder=" Enter Skin Here..."
+              placeholderTextColor="#ABABAB"
+            />
+            <Dropdown
+              data={guns}
+              search
+              maxHeight={300}
+              searchField={guns}
+              labelField="label"
+              valueField="value"
+              value={gun}
+              placeHolderStyle={{
+                color: "white",
+                fontWeight: "bold",
+              }}
+              placeholder="test"
+              onChange={(item) => {
+                setGun(item.value);
+              }}
+            />
             <View>
-              <Text>Factory New</Text>
-              <Checkbox
-                value={wearObj["Factory New"]}
-                onValueChange={() =>
+              <Text style={{ color: "white" }}>Wears:</Text>
+              <View>
+                <Text style={{ color: "white" }}>Factory New</Text>
+                <Checkbox
+                  value={wearObj["Factory New"]}
+                  onValueChange={() =>
+                    setWearObj({
+                      ...wearObj,
+                      "Factory New": !wearObj["Factory New"],
+                    })
+                  }
+                />
+              </View>
+              <View>
+                <Text style={{ color: "white" }}>Minimal Wear</Text>
+                <Checkbox
+                  value={wearObj["Minimal Wear"]}
+                  onValueChange={() =>
+                    setWearObj({
+                      ...wearObj,
+                      "Minimal Wear": !wearObj["Minimal Wear"],
+                    })
+                  }
+                />
+              </View>
+              <View>
+                <Text style={{ color: "white" }}>Field Tested</Text>
+                <Checkbox
+                  value={wearObj["Field-Tested"]}
+                  onValueChange={() =>
+                    setWearObj({
+                      ...wearObj,
+                      "Field-Tested": !wearObj["Field-Tested"],
+                    })
+                  }
+                />
+              </View>
+              <View>
+                <Text style={{ color: "white" }}>Well Worn</Text>
+                <Checkbox
+                  value={wearObj["Well-Worn"]}
+                  onValueChange={() =>
+                    setWearObj({
+                      ...wearObj,
+                      "Well-Worn": !wearObj["Well-Worn"],
+                    })
+                  }
+                />
+              </View>
+              <View>
+                <Text style={{ color: "white" }}>Battle Scarred</Text>
+                <Checkbox
+                  value={wearObj["Battle-Scarred"]}
+                  onValueChange={() =>
+                    setWearObj({
+                      ...wearObj,
+                      "Battle-Scarred": !wearObj["Battle-Scarred"],
+                    })
+                  }
+                />
+              </View>
+            </View>
+            <View style={GlobalStyles.modalButtons}>
+              <Button
+                title="Search"
+                onPress={() => {
+                  setShowModal(!showModal);
+                  props.filter(gun, wearObj, skinName);
+                }}
+              />
+            </View>
+            <View style={GlobalStyles.modalButtons}>
+              <Button
+                title="Clear"
+                onPress={() => {
+                  setShowModal(!showModal);
+                  props.filter(setGun(null), setSkinName(" "));
                   setWearObj({
-                    ...wearObj,
-                    "Factory New": !wearObj["Factory New"],
-                  })
-                }
+                    "Factory New": true,
+                    "Minimal Wear": true,
+                    "Field-Tested": true,
+                    "Well-Worn": true,
+                    "Battle-Scarred": true,
+                  });
+                }}
               />
             </View>
-            <View>
-              <Text>Minimal Wear</Text>
-              <Checkbox
-                value={wearObj["Minimal Wear"]}
-                onValueChange={() =>
-                  setWearObj({
-                    ...wearObj,
-                    "Minimal Wear": !wearObj["Minimal Wear"],
-                  })
-                }
-              />
+            <View style={GlobalStyles.modalButtons}>
+              <Button title="Close" onPress={() => setShowModal(!showModal)} />
             </View>
-            <View>
-              <Text>Field Tested</Text>
-              <Checkbox
-                value={wearObj["Field-Tested"]}
-                onValueChange={() =>
-                  setWearObj({
-                    ...wearObj,
-                    "Field-Tested": !wearObj["Field-Tested"],
-                  })
-                }
-              />
-            </View>
-            <View>
-              <Text>Well Worn</Text>
-              <Checkbox
-                value={wearObj["Well-Worn"]}
-                onValueChange={() =>
-                  setWearObj({ ...wearObj, "Well-Worn": !wearObj["Well-Worn"] })
-                }
-              />
-            </View>
-            <View>
-              <Text>Battle Scarred</Text>
-              <Checkbox
-                value={wearObj["Battle-Scarred"]}
-                onValueChange={() =>
-                  setWearObj({
-                    ...wearObj,
-                    "Battle-Scarred": !wearObj["Battle-Scarred"],
-                  })
-                }
-              />
-            </View>
-          </View>
-          <Button
-            title="Search"
-            onPress={() => {
-              setShowModal(!showModal);
-              props.filter(gun, wearObj, skinName);
-            }}
-          />
-          <Button title="Close" onPress={() => setShowModal(!showModal)} />
+          </SafeAreaView>
         </SafeAreaView>
       </Modal>
     );
@@ -221,17 +251,18 @@ export default function MainScreen(props) {
       <SafeAreaView>
         {renderLabel()}
         <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-          placeholderStyle={styles.placeHolderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
+          style={[GlobalStyles.dropdown, isFocus && { borderColor: "blue" }]}
+          placeholderStyle={GlobalStyles.placeHolderStyle}
+          selectedTextStyle={GlobalStyles.selectedTextStyle}
+          inputSearchStyle={GlobalStyles.inputSearchStyle}
+          iconStyle={GlobalStyles.iconStyle}
           data={guns}
           search
           maxHeight={300}
           labelField={"label"}
           valueField={"value"}
           placeholder={!isFocus ? "Selected item" : "..."}
+          placeholderTextColor="white"
           searchPlaceholder="Search..."
           value={gun}
           onFocus={() => setisFocus(true)}
@@ -246,9 +277,9 @@ export default function MainScreen(props) {
   };
 
   return (
-    <SafeAreaView style={styles.background}>
+    <SafeAreaView style={GlobalStyles.background}>
       {searchMenu()}
-      <View style={styles.view}>
+      <View style={GlobalStyles.view}>
         <Button
           title="Search"
           onPress={() => {
@@ -269,13 +300,13 @@ export default function MainScreen(props) {
 
 const renderItem = ({ item }) => {
   return (
-    <SafeAreaView style={styles.imageView}>
+    <SafeAreaView style={GlobalStyles.imageView}>
       <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
         {item.name}
       </Text>
       <Image
         source={{ uri: img(item.icon_url) }}
-        style={[styles.img, { borderColor: "#" + item.rarity_color }]}
+        style={[GlobalStyles.img, { borderColor: "#" + item.rarity_color }]}
       />
     </SafeAreaView>
   );
@@ -286,73 +317,3 @@ const img = (id) => {
   const url = `${IMGPREFIX}/${id}`;
   return url;
 };
-
-const styles = StyleSheet.create({
-  view: {
-    padding: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    margin: 20,
-    borderRadius: 5,
-  },
-  img: {
-    width: "95%",
-    aspectRatio: 1,
-    backgroundColor: "#071215",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "transparent",
-    margin: 5,
-  },
-  imageView: {
-    flex: 1,
-    flexDirection: "column",
-    margin: 0,
-    paddingTop: 10,
-    justifyContent: "space-between",
-    alignContent: "center",
-  },
-  background: {
-    backgroundColor: "#1b2838",
-  },
-  list: {},
-  searchBar: {
-    borderWidth: 1,
-    backgroundColor: "#DADADA",
-    width: "75%",
-  },
-  checkBoxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  dropdown: {
-    height: 50,
-    borderColor: "gray",
-    borderWidth: 0.5,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  label: {
-    position: "absolute",
-    backgroundColor: "white",
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
-  },
-});
