@@ -9,6 +9,7 @@ import {
   Modal,
   TextInput,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { Dropdown } from "react-native-element-dropdown";
@@ -30,18 +31,29 @@ export default function Tabs({ filter }) {
   return (
     <SafeAreaView style={GlobalStyles.background}>
       <Tab.Navigator
-        screenOptions={{
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused }) => {
+            let iconSource;
+
+            if (route.name === "Home") {
+              iconSource = focused
+                ? require("../assets/homeIconSelected.png")
+                : require("../assets/homeIconNotSelected.png");
+            } else if (route.name === "Wishlist") {
+              iconSource = focused
+                ? require("../assets/wishlistIconSelected.png")
+                : require("../assets/wishlistIconNotSelected.png");
+            }
+
+            return (
+              <Image source={iconSource} style={{ width: 35, height: 35 }} />
+            );
+          },
           headerShown: false,
-          tabBarStyle: { backgroundColor: "rgba(0, 0, 0, 0.4)" },
-        }}
+          tabBarStyle: { backgroundColor: "rgba(0, 0, 0, 1)" },
+        })}
       >
-        <Tab.Screen
-          name="Home"
-          // options={{
-          //   headerShown: false,
-          //   tabBarStyle: { backgroundColor: "rgba(0, 0, 0, 0.4)" },
-          // }}
-        >
+        <Tab.Screen name="Home">
           {() => <MainScreen filter={filter} />}
         </Tab.Screen>
         <Tab.Screen name="Wishlist" component={WishlistScreen} />
@@ -54,6 +66,7 @@ function MainScreen({ route, navigation, filter }) {
   const dispatch = useDispatch();
 
   const [showModal, setShowModal] = useState(false); //Modal state
+  const [wishlistItems, setWishListItems] = useState([]);
 
   //Filter dependencies
   const [skinName, setSkinName] = useState(""); //filtered word state
@@ -337,6 +350,7 @@ const renderItem = ({ item }) => {
       <Image
         source={{ uri: img(item.icon_url) }}
         style={[GlobalStyles.img, { borderColor: "#" + item.rarity_color }]}
+        onLongPress={() => addToWishList(item)}
       />
     </SafeAreaView>
   );
@@ -349,5 +363,9 @@ const img = (id) => {
 };
 
 function WishlistScreen() {
-  return <Text>Hello this is my wishlist page</Text>;
+  return (
+    <SafeAreaView style={GlobalStyles.background}>
+      <Text>Your Favorite Items</Text>
+    </SafeAreaView>
+  );
 }
