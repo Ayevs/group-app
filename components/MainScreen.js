@@ -285,15 +285,15 @@ function MainScreen({ route, navigation, filter }) {
   };
 
   const FlyingImageAnimation = () => {
-    const position = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+    const position = useRef(new Animated.ValueXY({ x: 0, y: 400 })).current;
     const rotation = useRef(new Animated.Value(0)).current;
 
     const startAnimation = () => {
       Animated.parallel([
         Animated.timing(position, {
-          toValue: { x: 300, y: 4000 }, // Adjust these values as needed
-          duration: 3000, // Animation duration in milliseconds
-          useNativeDriver: false, // To prevent "Animated: `useNativeDriver` is not supported" warning
+          toValue: { x: 300, y: 4000 },
+          duration: 3000,
+          useNativeDriver: false,
         }),
         Animated.timing(rotation, {
           toValue: 360,
@@ -306,15 +306,15 @@ function MainScreen({ route, navigation, filter }) {
 
     useEffect(() => {
       startAnimation();
-    }, []); // Run the animation once when the component mounts
+    }, []);
 
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Animated.Image
           source={require("../assets/rocky1.png")}
           style={{
-            width: 500, // Adjust the width as needed
-            height: 500, // Adjust the height as needed
+            width: 500,
+            height: 500,
             transform: [
               { translateX: position.x },
               { translateY: position.y },
