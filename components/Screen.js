@@ -27,10 +27,10 @@ export default function Screen() {
 
   useEffect(() => {
     //USE THIS FUNCTION TO TEST WITH THE ACTUAL API
-    //fetchData()
+    fetchData()
 
     //USE THIS FUNCTION TO TEST WITH THE OFFLINE JSON FILE
-    updateState(TESTJSON);
+    //updateState(TESTJSON);
   }, [filters]);
 
   const giveFilters = (g, w, s) => {
