@@ -462,7 +462,6 @@ const WishlistScreen = () => {
         <Text
           style={{
             fontSize: 20,
-            fontWeight: "bold",
             color: "white",
             paddingBottom: 20,
             textAlign: "center",
