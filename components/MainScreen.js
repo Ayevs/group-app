@@ -21,7 +21,36 @@ import { addItem, resetState } from "../reducers/itemslice";
 import { useSelector, useDispatch } from "react-redux";
 import Checkbox from "expo-checkbox";
 
-export default function MainScreen(props) {
+//navbar
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+const Tab = createBottomTabNavigator();
+
+export default function Tabs({ filter }) {
+  return (
+    <SafeAreaView style={GlobalStyles.background}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: { backgroundColor: "rgba(0, 0, 0, 0.4)" },
+        }}
+      >
+        <Tab.Screen
+          name="Home"
+          // options={{
+          //   headerShown: false,
+          //   tabBarStyle: { backgroundColor: "rgba(0, 0, 0, 0.4)" },
+          // }}
+        >
+          {() => <MainScreen filter={filter} />}
+        </Tab.Screen>
+        <Tab.Screen name="Wishlist" component={WishlistScreen} />
+      </Tab.Navigator>
+    </SafeAreaView>
+  );
+}
+
+function MainScreen({ route, navigation, filter }) {
   const dispatch = useDispatch();
 
   const [showModal, setShowModal] = useState(false); //Modal state
@@ -123,7 +152,7 @@ export default function MainScreen(props) {
               placeholder=" Enter Skin Here..."
               placeholderTextColor="#ABABAB"
             />
-            <Dropdown
+            {/* <Dropdown
               data={guns}
               search
               maxHeight={300}
@@ -139,9 +168,9 @@ export default function MainScreen(props) {
               onChange={(item) => {
                 setGun(item.value);
               }}
-            />
+            /> */}
             <View>
-              <Text style={{ color: "white" }}>Wears:</Text>
+              <Text style={{ color: "white", marginTop: 20 }}>Wears:</Text>
               <View>
                 <Text style={{ color: "white" }}>Factory New</Text>
                 <Checkbox
@@ -208,7 +237,8 @@ export default function MainScreen(props) {
                 title="Search"
                 onPress={() => {
                   setShowModal(!showModal);
-                  props.filter(gun, wearObj, skinName);
+                  filter(gun, wearObj, skinName);
+                  console.log(gun, wearObj, skinName);
                 }}
               />
             </View>
@@ -217,7 +247,7 @@ export default function MainScreen(props) {
                 title="Clear"
                 onPress={() => {
                   setShowModal(!showModal);
-                  props.filter(setGun(null), setSkinName(" "));
+                  filter(setGun(null), setSkinName(" "));
                   setWearObj({
                     "Factory New": true,
                     "Minimal Wear": true,
@@ -237,44 +267,44 @@ export default function MainScreen(props) {
     );
   };
 
-  const dropdownComponent = () => {
-    const [isFocus, setisFocus] = useState(null);
+  // const dropdownComponent = () => {
+  //   const [isFocus, setisFocus] = useState(null);
 
-    const renderLabel = () => {
-      if (gun || isFocus) {
-        return <Text>Guns:</Text>;
-      }
-      return null;
-    };
+  //   const renderLabel = () => {
+  //     if (gun || isFocus) {
+  //       return <Text>Guns:</Text>;
+  //     }
+  //     return null;
+  //   };
 
-    return (
-      <SafeAreaView>
-        {renderLabel()}
-        <Dropdown
-          style={[GlobalStyles.dropdown, isFocus && { borderColor: "blue" }]}
-          placeholderStyle={GlobalStyles.placeHolderStyle}
-          selectedTextStyle={GlobalStyles.selectedTextStyle}
-          inputSearchStyle={GlobalStyles.inputSearchStyle}
-          iconStyle={GlobalStyles.iconStyle}
-          data={guns}
-          search
-          maxHeight={300}
-          labelField={"label"}
-          valueField={"value"}
-          placeholder={!isFocus ? "Selected item" : "..."}
-          placeholderTextColor="white"
-          searchPlaceholder="Search..."
-          value={gun}
-          onFocus={() => setisFocus(true)}
-          onBlur={() => setisFocus(false)}
-          onChange={(item) => {
-            setGun(item.value);
-            setisFocus(false);
-          }}
-        />
-      </SafeAreaView>
-    );
-  };
+  //   return (
+  //     <SafeAreaView>
+  //       {renderLabel()}
+  //       <Dropdown
+  //         style={[GlobalStyles.dropdown, isFocus && { borderColor: "blue" }]}
+  //         placeholderStyle={GlobalStyles.placeHolderStyle}
+  //         selectedTextStyle={GlobalStyles.selectedTextStyle}
+  //         inputSearchStyle={GlobalStyles.inputSearchStyle}
+  //         iconStyle={GlobalStyles.iconStyle}
+  //         data={guns}
+  //         search
+  //         maxHeight={300}
+  //         labelField={"label"}
+  //         valueField={"value"}
+  //         placeholder={!isFocus ? "Selected item" : "..."}
+  //         placeholderTextColor="white"
+  //         searchPlaceholder="Search..."
+  //         value={gun}
+  //         onFocus={() => setisFocus(true)}
+  //         onBlur={() => setisFocus(false)}
+  //         onChange={(item) => {
+  //           setGun(item.value);
+  //           setisFocus(false);
+  //         }}
+  //       />
+  //     </SafeAreaView>
+  //   );
+  // };
 
   return (
     <SafeAreaView style={GlobalStyles.background}>
@@ -317,3 +347,7 @@ const img = (id) => {
   const url = `${IMGPREFIX}/${id}`;
   return url;
 };
+
+function WishlistScreen() {
+  return <Text>Hello this is my wishlist page</Text>;
+}

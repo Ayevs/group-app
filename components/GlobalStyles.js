@@ -33,6 +33,7 @@ export default StyleSheet.create({
     backgroundColor: "#DADADA",
     width: "75%",
     borderRadius: 5,
+    marginTop: 20,
   },
   checkBoxContainer: {
     flexDirection: "row",

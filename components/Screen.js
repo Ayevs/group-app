@@ -12,6 +12,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 //Misc imports
 import TESTJSON from "../JSON_TEST/state.json";
+import { NavigationContainer } from "@react-navigation/native";
+import Tabs from "./MainScreen.js";
 
 export default function Screen() {
   const [loading, setLoading] = useState(true);
@@ -37,17 +39,17 @@ export default function Screen() {
 
   const filtersChecked = (item) => {
     if (item != undefined) {
-      if (filters.skin != null) {
+      if (filters.skin != null && item.name) {
         if (!item.name.toLowerCase().includes(filters.skin.toLowerCase())) {
           return false;
         }
       }
-      if (filters.wears != null) {
-        if (filters.wears[item.exterior] == false) {
+      if (filters.wears != null && item.exterior) {
+        if (filters.wears[item.exterior] === false) {
           return false;
         }
       }
-      if (filters.gun != null) {
+      if (filters.gun != null && item.gun) {
         if (!item.gun_type.includes(filters.gun)) {
           return false;
         }
@@ -78,7 +80,7 @@ export default function Screen() {
           target++;
         }
       }
-      console.log(promises.length);
+      // console.log(promises.length);
     }
 
     Promise.all(promises)
@@ -114,7 +116,13 @@ export default function Screen() {
 
   return (
     <SafeAreaView>
-      {loading == true ? <Loading /> : <MainScreen filter={giveFilters} />}
+      {loading == true ? (
+        <Loading />
+      ) : (
+        <NavigationContainer>
+          <Tabs filter={giveFilters} />
+        </NavigationContainer>
+      )}
     </SafeAreaView>
   );
 }
