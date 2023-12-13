@@ -169,23 +169,6 @@ function MainScreen({ route, navigation, filter }) {
               placeholder=" Enter Skin Here..."
               placeholderTextColor="#ABABAB"
             />
-            {/* <Dropdown
-              data={guns}
-              search
-              maxHeight={300}
-              searchField={guns}
-              labelField="label"
-              valueField="value"
-              value={gun}
-              placeHolderStyle={{
-                color: "white",
-                fontWeight: "bold",
-              }}
-              placeholder="test"
-              onChange={(item) => {
-                setGun(item.value);
-              }}
-            /> */}
             <View>
               <Text style={{ color: "white", marginTop: 20 }}>Wears:</Text>
               <View>
@@ -331,44 +314,6 @@ function MainScreen({ route, navigation, filter }) {
     );
   };
 
-  // const dropdownComponent = () => {
-  //   const [isFocus, setisFocus] = useState(null);
-
-  //   const renderLabel = () => {
-  //     if (gun || isFocus) {
-  //       return <Text>Guns:</Text>;
-  //     }
-  //     return null;
-  //   };
-
-  //   return (
-  //     <SafeAreaView>
-  //       {renderLabel()}
-  //       <Dropdown
-  //         style={[GlobalStyles.dropdown, isFocus && { borderColor: "blue" }]}
-  //         placeholderStyle={GlobalStyles.placeHolderStyle}
-  //         selectedTextStyle={GlobalStyles.selectedTextStyle}
-  //         inputSearchStyle={GlobalStyles.inputSearchStyle}
-  //         iconStyle={GlobalStyles.iconStyle}
-  //         data={guns}
-  //         search
-  //         maxHeight={300}
-  //         labelField={"label"}
-  //         valueField={"value"}
-  //         placeholder={!isFocus ? "Selected item" : "..."}
-  //         placeholderTextColor="white"
-  //         searchPlaceholder="Search..."
-  //         value={gun}
-  //         onFocus={() => setisFocus(true)}
-  //         onBlur={() => setisFocus(false)}
-  //         onChange={(item) => {
-  //           setGun(item.value);
-  //           setisFocus(false);
-  //         }}
-  //       />
-  //     </SafeAreaView>
-  //   );
-  // };
 
   const addToWishList = (item) => {
     dispatch(addToWishlist(item));
@@ -419,23 +364,6 @@ function MainScreen({ route, navigation, filter }) {
           numColumns={2}
         />
       </View>
-    </SafeAreaView>
-  );
-}
-
-const renderItem = ({ item }) => {
-    return (
-      <SafeAreaView style={styles.imageView}>
-        <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
-          {item.name}
-        </Text>
-        <Image
-          source={{ uri: img(item.icon_url) }}
-          style={[styles.img, { borderColor: "#" + item.rarity_color }]}
-        />
-      </SafeAreaView>
-    );
-};
     </SafeAreaView>
   );
 }

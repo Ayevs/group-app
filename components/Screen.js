@@ -17,7 +17,7 @@ import Tabs from "./MainScreen.js";
 
 export default function Screen() {
   const [loading, setLoading] = useState(true);
-  const LOAD_AMOUNT = 10; //to adjust amount of items loaded
+  const LOAD_AMOUNT = 30; //to adjust amount of items loaded
   const START_LOAD = 1;
   const [filters, setFilters] = useState({
     gun: null,
