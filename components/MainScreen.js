@@ -10,8 +10,11 @@ import {
   TextInput,
   Pressable,
   TouchableOpacity,
+  ToastAndroid,
+  Animated,
+  Easing,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dropdown } from "react-native-element-dropdown";
 import GlobalStyles from "./GlobalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,6 +27,7 @@ import Checkbox from "expo-checkbox";
 
 //navbar
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { addToWishlist } from "../reducers/wishlistslice";
 
 const Tab = createBottomTabNavigator();
 
@@ -280,6 +284,53 @@ function MainScreen({ route, navigation, filter }) {
     );
   };
 
+  const FlyingImageAnimation = () => {
+    const position = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+    const rotation = useRef(new Animated.Value(0)).current;
+
+    const startAnimation = () => {
+      Animated.parallel([
+        Animated.timing(position, {
+          toValue: { x: 300, y: 4000 }, // Adjust these values as needed
+          duration: 3000, // Animation duration in milliseconds
+          useNativeDriver: false, // To prevent "Animated: `useNativeDriver` is not supported" warning
+        }),
+        Animated.timing(rotation, {
+          toValue: 360,
+          duration: 5000,
+          easing: Easing.linear,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    };
+
+    useEffect(() => {
+      startAnimation();
+    }, []); // Run the animation once when the component mounts
+
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Animated.Image
+          source={require("../assets/rocky1.png")}
+          style={{
+            width: 500, // Adjust the width as needed
+            height: 500, // Adjust the height as needed
+            transform: [
+              { translateX: position.x },
+              { translateY: position.y },
+              {
+                rotate: rotation.interpolate({
+                  inputRange: [0, 360],
+                  outputRange: ["0deg", "360deg"],
+                }),
+              },
+            ],
+          }}
+        />
+      </View>
+    );
+  };
+
   // const dropdownComponent = () => {
   //   const [isFocus, setisFocus] = useState(null);
 
@@ -319,21 +370,52 @@ function MainScreen({ route, navigation, filter }) {
   //   );
   // };
 
+  const addToWishList = (item) => {
+    dispatch(addToWishlist(item));
+    console.log("adding to wishlist", wishlistItems);
+  };
+
+  const renderMainItem = ({ item }) => {
+    return (
+      <SafeAreaView style={GlobalStyles.imageView}>
+        <TouchableOpacity
+          onLongPress={() => {
+            console.log("longpressed", item);
+            addToWishList(item);
+            ToastAndroid.show("Added To Your Wishlist!", ToastAndroid.SHORT);
+          }}
+          style={GlobalStyles.imageView}
+        >
+          <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
+            {item.name}
+          </Text>
+          <Image
+            source={{ uri: img(item.icon_url) }}
+            style={[GlobalStyles.img, { borderColor: "#" + item.rarity_color }]}
+          />
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  };
+
   return (
     <SafeAreaView style={GlobalStyles.background}>
       {searchMenu()}
       <View style={GlobalStyles.view}>
-        <Button
-          title="Search"
-          onPress={() => {
-            setShowModal(true);
-          }}
-        />
+        <FlyingImageAnimation />
+        <View style={{ paddingTop: 10, paddingBottom: 20 }}>
+          <Button
+            title="Search"
+            onPress={() => {
+              setShowModal(true);
+            }}
+          />
+        </View>
         <FlatList
           key={"-"}
           style={GlobalStyles.list}
           data={items}
-          renderItem={renderItem}
+          renderItem={renderMainItem}
           numColumns={2}
         />
       </View>
@@ -341,31 +423,60 @@ function MainScreen({ route, navigation, filter }) {
   );
 }
 
-const renderItem = ({ item }) => {
-  return (
-    <SafeAreaView style={GlobalStyles.imageView}>
-      <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
-        {item.name}
-      </Text>
-      <Image
-        source={{ uri: img(item.icon_url) }}
-        style={[GlobalStyles.img, { borderColor: "#" + item.rarity_color }]}
-        onLongPress={() => addToWishList(item)}
-      />
-    </SafeAreaView>
-  );
-};
-
 const img = (id) => {
   const IMGPREFIX = "https://steamcommunity-a.akamaihd.net/economy/image";
   const url = `${IMGPREFIX}/${id}`;
   return url;
 };
 
-function WishlistScreen() {
+const WishlistScreen = () => {
+  const dispatch = useDispatch();
+  const wishListItems = useSelector((state) => state.wishlist.wishlistItems);
+  console.log("wishlist items in wishlist screen: ", wishListItems);
+
+  const renderItemWishList = ({ item }) => {
+    console.log("rendering wishlist Item:", item);
+
+    const removeFromWishlist = () => {
+      dispatch(removeFromWishlist(item.id));
+    };
+
+    return (
+      <SafeAreaView style={GlobalStyles.imageView}>
+        <TouchableOpacity onLongPress={removeFromWishlist}>
+          <Text style={{ color: "rgb(210, 210, 210)", textAlign: "center" }}>
+            {item.name}
+          </Text>
+          <Image
+            source={{ uri: img(item.icon_url) }}
+            style={[GlobalStyles.img, { borderColor: "#" + item.rarity_color }]}
+          />
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  };
+
   return (
     <SafeAreaView style={GlobalStyles.background}>
-      <Text>Your Favorite Items</Text>
+      <View style={GlobalStyles.view}>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            color: "white",
+            paddingBottom: 20,
+            textAlign: "center",
+            paddingTop: 10,
+          }}
+        >
+          Your Wishlist
+        </Text>
+        <FlatList
+          data={wishListItems}
+          renderItem={renderItemWishList}
+          numColumns={2}
+        />
+      </View>
     </SafeAreaView>
   );
-}
+};
